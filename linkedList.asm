@@ -2,7 +2,6 @@
 traverseList:
     push rdi
     push rsi
-    push rsp
 
     mov rdi, head
 
@@ -18,7 +17,6 @@ traverseList:
     .end:
         mov rax, rdi
 
-        pop rsp
         pop rsi
         pop rdi    
         ret
@@ -46,3 +44,82 @@ initList:
         
     pop rsi
     ret
+
+getNode:
+    push rsi
+    push rdx
+    push r8
+
+    mov rsi, head
+
+    .loop:
+        mov r8, [rsi]
+        cmp r8, 1000
+        jle .success
+
+        cmp rdx, rdi
+        je .success
+        inc rdx
+
+        mov rsi, [rsi]
+
+        jmp .loop
+    .success:
+        mov rax, rsi
+        jmp .end
+    .err:
+        mov rax, -1
+        jmp .end
+
+    .end:
+        pop r8
+        pop rdx
+        pop rsi
+
+        ret
+
+lLen:
+    push rsi
+    push rdi
+
+    mov rdi, head
+
+    .loop:
+        mov rsi, [rdi]
+        cmp rsi, 1000
+        jle .end
+
+        mov rdi, [rdi]
+
+        jmp .loop
+    .end:
+        mov rax, rdi
+
+        pop rdi
+        pop rsi
+
+        ret
+
+printList:
+    push rsi
+    push rdi
+
+    mov rdi, head
+    .loop:
+        mov rsi, [rdi]
+        cmp rsi, 1000
+        jle .end
+
+        push rsi
+        add rsi, 8
+        mov rsi, [rsi]
+        call iprintln
+        pop rsi
+
+        mov rdi, [rdi]
+
+        jmp .loop
+    .end:
+        pop rdi
+        pop rsi
+        ret

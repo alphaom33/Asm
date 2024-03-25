@@ -4,65 +4,56 @@ default rel
 %include 'stringfns.asm'
 
 section .data
-    fizz db "FIZZ"
-    buzz db "BUZZ"
+    fizz db "FIZZ", 0h
+    buzz db "BUZZ", 0h
 
 section .text
     global _start
 
 _start:
     mov rdi, 0
+    mov r8, 0
 
     .loop:
+        cmp rdi, 100
+        je .end
         inc rdi
-        mov r8, rsp
 
-        .checkFizz:
-            mov rdx, 0
-            mov rsi, 3
-
+        .fizz:
+            push rdi
             mov rax, rdi
-            div rsi
-            
-            mov rcx, rdx
-            cmp rcx, 0
-            jne .checkBuzz
+            mov rdi, 3
+            call modulo
+            pop rdi
 
-            mov r9, rsp
-            push fizz
-            mov rsi, 0h
-            push rsi
-            mov rsi, rsp
-            call println
 
-        .checkBuzz:
-            mov rdx, 0
-            mov rsi, 5
+            cmp rax, 0
+            jne .buzz
 
+            mov rsi, fizz
+            call sprint
+
+            mov r8, 1
+        .buzz:
+            push rdi
             mov rax, rdi
-            div rsi
-            
-            mov rcx, rdx
-            cmp rcx, 0
-            jne .checkNum
+            mov rdi, 5
+            call modulo
+            pop rdi
+
+            cmp rax, 0
+            jne .num
 
             mov rsi, buzz
-            push rsi        
+            call sprint
 
-        .checkNum:
-            inc r8
-            cmp byte [r8], 0h
-            je .terminate
+            mov r8, 1
+        .num:
+            cmp r8, 0
+            jne .next
 
             mov rsi, rdi
             call iprint
-            jmp .next
-        .terminate:
-            mov rsi, 0h
-            push rsi
-            mov rsi, r8
-            call sprint
-
         .next:
             mov rsi, 0ah
             push rsi
@@ -70,9 +61,20 @@ _start:
             call sprint
             pop rsi
 
-            cmp rdi, 100
-            jne .loop
-    call exit
+            mov r8, 0
+            jmp .loop
+
+    .end:
+        call exit
+
+
+modulo:
+    push rdx
+    mov rdx, 0
+    div rdi
+    mov rax, rdx
+    pop rdx
+    ret
 
 exit:
     mov rax, 60

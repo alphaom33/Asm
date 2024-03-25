@@ -22,16 +22,19 @@ traverseList:
         ret
 
 addNode:
-    mov rsi, rsp
+    push rdi
+    mov rdi, 16
+    call malloc
+    mov r8, rax
+    pop rdi
+    mov qword [rax + 8], rdi
 
-    push rdi
-    mov rdi, 0h
-    push rdi
+
     call traverseList
-    mov qword [rax], rsp
+    mov qword [rax], r8
 
-    mov rax, rsp
-    mov rsp, rsi
+    call iprintln
+
     ret
 
 initList:

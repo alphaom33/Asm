@@ -1,3 +1,6 @@
+bits 64
+default rel
+
 %include "stringfns.asm"
 %include "linkedList.asm"
 
@@ -9,38 +12,17 @@ section .bss
 
     rand resb 1
 
+    current_stack resq 1
+
 section .text
 
     extern _start
+    extern malloc
+    extern free
 
     _start:
-        mov rdi, 9
-        call initList
+         
 
-        mov rsi, 0
-        mov rcx, 0
-        mov rdx, 0
-        .loop:
-            push rcx
-            mov rdi, rand
-            mov rsi, 1
-            mov rax, 318
-            syscall
-            mov rsi, [rand]
-            pop rcx
-
-            mov rdi, [rand]
-            call addNode
-            mov rsp, rax
-
-            inc rcx
-            cmp rcx, 100
-            je .end
-            jmp .loop
-
-        .end:
-        
-        call printList
 
         call exit
 
